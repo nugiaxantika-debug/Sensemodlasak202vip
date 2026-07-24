@@ -23,6 +23,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import schedule from "node-schedule";
 import xnxx from "xnxx-scraper";
+import { generateTextPath } from "../utils/svgText";
 import { igdl, fbdl, ytmp4, ytmp3 } from "ruhend-scraper";
 import vredenYt from "@vreden/youtube_scraper";
 import btch from "btch-downloader";
@@ -3389,12 +3390,12 @@ Link referensi: ${randomItem.link}` }, { quoted: msg });
                  <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
                    <rect width="100%" height="100%" fill="${bgColor}" rx="40" ry="40"/>
                    <rect x="20" y="20" width="${width-40}" height="${height-40}" fill="none" stroke="#ffffff" stroke-width="8" rx="20" ry="20" stroke-dasharray="15 10"/>
-                   <text x="50%" y="130" font-size="40" font-family="Ubuntu, Noto Sans, DejaVu Sans, sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">SERTIFIKAT RESMI</text>
-                   <text x="50%" y="200" font-size="28" font-family="Ubuntu, Noto Sans, DejaVu Sans, sans-serif" fill="#e2e8f0" text-anchor="middle">Menyatakan bahwa:</text>
-                   <text x="50%" y="280" font-size="52" font-family="Ubuntu, Noto Sans, DejaVu Sans, sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">${safeName}</text>
-                   <text x="50%" y="360" font-size="28" font-family="Ubuntu, Noto Sans, DejaVu Sans, sans-serif" fill="#e2e8f0" text-anchor="middle">Telah terbukti dan diakui sebagai</text>
-                   <text x="50%" y="430" font-size="24" font-family="Ubuntu, Noto Sans, DejaVu Sans, sans-serif" fill="#e2e8f0" text-anchor="middle">orang yang sangat</text>
-                   <text x="50%" y="470" font-size="40" font-family="Ubuntu, Noto Sans, DejaVu Sans, sans-serif" font-weight="bold" fill="#fcd34d" text-anchor="middle">${type.toUpperCase()}</text>
+                   ${generateTextPath('SERTIFIKAT RESMI', {x: 256, y: 130, fontSize: 40, fill: '#ffffff', weight: 'bold', anchor: 'middle'})}
+                   ${generateTextPath('Menyatakan bahwa:', {x: 256, y: 200, fontSize: 28, fill: '#e2e8f0', anchor: 'middle'})}
+                   ${generateTextPath(safeName, {x: 256, y: 280, fontSize: 52, fill: '#ffffff', weight: 'bold', anchor: 'middle'})}
+                   ${generateTextPath('Telah terbukti dan diakui sebagai', {x: 256, y: 360, fontSize: 28, fill: '#e2e8f0', anchor: 'middle'})}
+                   ${generateTextPath('orang yang sangat', {x: 256, y: 430, fontSize: 24, fill: '#e2e8f0', anchor: 'middle'})}
+                   ${generateTextPath(type.toUpperCase(), {x: 256, y: 470, fontSize: 40, fill: '#fcd34d', weight: 'bold', anchor: 'middle'})}
                  </svg>
                `;
                const buffer = await sharp(Buffer.from(svgImage)).webp({ quality: 80 }).toBuffer();
@@ -3430,8 +3431,8 @@ Link referensi: ${randomItem.link}` }, { quoted: msg });
              }
              
              const svgMeme = `<svg width="512" height="512">
-               <text x="256" y="50" font-size="48" font-family="Impact, Arial, sans-serif" font-weight="bold" fill="white" stroke="black" stroke-width="2" text-anchor="middle" dominant-baseline="hanging">${atas.trim()}</text>
-               <text x="256" y="462" font-size="48" font-family="Impact, Arial, sans-serif" font-weight="bold" fill="white" stroke="black" stroke-width="2" text-anchor="middle" dominant-baseline="baseline">${bawah.trim()}</text>
+               ${generateTextPath(atas.trim(), {x: 256, y: 80, fontSize: 48, fill: 'white', weight: 'bold', anchor: 'middle'})}
+               ${generateTextPath(bawah.trim(), {x: 256, y: 462, fontSize: 48, fill: 'white', weight: 'bold', anchor: 'middle'})}
              </svg>`;
              
              const finalBuffer = await sharp(bgBuffer).composite([{ input: Buffer.from(svgMeme), blend: 'over' }]).webp().toBuffer();
@@ -3583,7 +3584,7 @@ Link referensi: ${randomItem.link}` }, { quoted: msg });
            lines.forEach((line, i) => {
              // Escape HTML characters
              const safeLine = line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-             textLinesSVG += `<text x="20" y="${30 + i*25}" font-family="Ubuntu, Noto Sans, DejaVu Sans, sans-serif" font-size="17" fill="#111b21">${safeLine}</text>`;
+             textLinesSVG += generateTextPath(safeLine, {x: 20, y: 30 + i*25, fontSize: 17, fill: '#111b21'});
            });
            
            const now = new Date();
@@ -3612,7 +3613,7 @@ Link referensi: ${randomItem.link}` }, { quoted: msg });
   <rect x="30" y="${bubbleY}" width="${bubbleWidth}" height="${bubbleHeight}" rx="12" fill="#ffffff" filter="url(#shadow)" />
   <g transform="translate(30, ${bubbleY})">
     ${textLinesSVG}
-    <text x="${bubbleWidth - 50}" y="${bubbleHeight - 12}" font-family="Ubuntu, Noto Sans, DejaVu Sans, sans-serif" font-size="12" fill="#667781">${timeStr}</text>
+    ${generateTextPath(timeStr, {x: bubbleWidth - 50, y: bubbleHeight - 12, fontSize: 12, fill: '#667781'})}
   </g>
 
   <!-- Context Menu -->
@@ -3620,43 +3621,43 @@ Link referensi: ${randomItem.link}` }, { quoted: msg });
   
   <g transform="translate(30, ${menuY})" font-family="Ubuntu, Noto Sans, DejaVu Sans, sans-serif" font-size="17" fill="#111b21">
     <!-- Balas -->
-    <text x="20" y="35">Balas</text>
+    ${generateTextPath('Balas', {x: 20, y: 35, fontSize: 16})}
     <path transform="translate(260, 15) scale(1.2)" d="M10,4 L4,10 L10,16 M4,10 L18,10 C21.3137,10 24,12.6863 24,16 C24,19.3137 21.3137,22 18,22 H14" stroke="#54656f" stroke-width="1.5" fill="none" />
     <line x1="20" y1="50" x2="${bubbleWidth - 20}" y2="50" stroke="#f0f2f5" stroke-width="1" />
 
     <!-- Teruskan -->
-    <text x="20" y="85">Teruskan</text>
+    ${generateTextPath('Teruskan', {x: 20, y: 85, fontSize: 16})}
     <path transform="translate(260, 65) scale(1.2)" d="M14,4 L20,10 L14,16 M20,10 L6,10 C2.68629,10 0,12.6863 0,16 C0,19.3137 2.68629,22 6,22 H10" stroke="#54656f" stroke-width="1.5" fill="none" />
     <line x1="20" y1="100" x2="${bubbleWidth - 20}" y2="100" stroke="#f0f2f5" stroke-width="1" />
 
     <!-- Salin -->
-    <text x="20" y="135">Salin</text>
+    ${generateTextPath('Salin', {x: 20, y: 135, fontSize: 16})}
     <rect x="260" y="117" width="14" height="14" rx="2" stroke="#54656f" stroke-width="1.5" fill="none" />
     <path d="M265,114 L277,114 C278.105,114 279,114.895 279,116 L279,127" stroke="#54656f" stroke-width="1.5" fill="none" />
     <line x1="20" y1="150" x2="${bubbleWidth - 20}" y2="150" stroke="#f0f2f5" stroke-width="1" />
 
     <!-- Beri bintang -->
-    <text x="20" y="185">Beri bintang</text>
+    ${generateTextPath('Beri bintang', {x: 20, y: 185, fontSize: 16})}
     <polygon points="270,165 273.5,172 281,173 275.5,178 277,185 270,181 263,185 264.5,178 259,173 266.5,172" stroke="#54656f" stroke-width="1.5" fill="none" />
     <line x1="20" y1="200" x2="${bubbleWidth - 20}" y2="200" stroke="#f0f2f5" stroke-width="1" />
 
     <!-- Sematkan -->
-    <text x="20" y="235">Sematkan</text>
+    ${generateTextPath('Sematkan', {x: 20, y: 235, fontSize: 16})}
     <path d="M266,215 L274,215 M270,215 L270,225 L265,230 H275 L270,225" stroke="#54656f" stroke-width="1.5" fill="none" />
     <line x1="20" y1="250" x2="${bubbleWidth - 20}" y2="250" stroke="#f0f2f5" stroke-width="1" />
 
     <!-- Laporkan -->
-    <text x="20" y="285">Laporkan</text>
+    ${generateTextPath('Laporkan', {x: 20, y: 285, fontSize: 16})}
     <path d="M270,265 L262,280 H278 Z M270,270 V275 M270,278 V279" stroke="#54656f" stroke-width="1.5" fill="none" />
     <line x1="20" y1="300" x2="${bubbleWidth - 20}" y2="300" stroke="#f0f2f5" stroke-width="1" />
 
     <!-- Hapus -->
-    <text x="20" y="335" fill="#ef4444">Hapus</text>
+    ${generateTextPath('Hapus', {x: 20, y: 335, fontSize: 16, fill: '#ef4444'})}
     <path d="M263,315 H277 M266,315 V332 C266,333.105 266.895,334 268,334 H272 C273.105,334 274,333.105 274,332 V315 M268,312 H272 C273.105,312 274,312.895 274,314 V315 H266 V314 C266,312.895 266.895,312 268,312 Z" stroke="#ef4444" stroke-width="1.5" fill="none" />
   </g>
 
   <!-- Watermark -->
-  <text x="30" y="${menuY + menuHeight + 35}" font-family="Ubuntu, Noto Sans, DejaVu Sans, sans-serif" font-size="14" fill="#667781">${watermark}</text>
+  ${generateTextPath(watermark, {x: 30, y: menuY + menuHeight + 35, fontSize: 14, fill: '#667781'})}
 </svg>`;
 
            const finalBuffer = await sharp(Buffer.from(svg)).png().toBuffer();
@@ -3802,7 +3803,7 @@ Link referensi: ${randomItem.link}` }, { quoted: msg });
                const safeText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                const svgText = `<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
                  <rect width="100%" height="100%" fill="rgba(138, 226, 52, 0.5)"/>
-                 <text x="50%" y="50%" font-size="60" font-family="Arial" font-weight="bold" fill="white" text-anchor="middle" alignment-baseline="middle" stroke="black" stroke-width="2">${safeText}</text>
+                 ${generateTextPath(safeText, {x: 256, y: 256, fontSize: 60, fill: 'white', weight: 'bold', anchor: 'middle'})}
                </svg>`;
                
                const finalBuffer = await sharp(imgBuffer)
@@ -4772,10 +4773,10 @@ Link referensi: ${randomItem.link}` }, { quoted: msg });
                <rect width="600" height="150" rx="30" fill="rgba(250, 250, 250, 0.95)" stroke="#ddd" stroke-width="2"/>
                <rect x="25" y="25" width="40" height="40" rx="10" fill="#25D366" />
                <path d="M45,35 L45,55 M35,45 L55,45" stroke="white" stroke-width="4" stroke-linecap="round"/>
-               <text x="80" y="52" font-family="Liberation Sans, sans-serif" font-size="22" font-weight="bold" fill="#555" letter-spacing="1">WHATSAPP</text>
-               <text x="530" y="52" font-family="Liberation Sans, sans-serif" font-size="20" fill="#888">now</text>
-               <text x="25" y="95" font-family="Liberation Sans, sans-serif" font-size="28" font-weight="bold" fill="#000">${safePushName}</text>
-               <text x="25" y="130" font-family="Liberation Sans, sans-serif" font-size="24" fill="#333">${safeText}</text>
+               ${generateTextPath('WHATSAPP', {x: 80, y: 52, fontSize: 22, fill: '#555', weight: 'bold'})}
+               ${generateTextPath('now', {x: 530, y: 52, fontSize: 20, fill: '#888'})}
+               ${generateTextPath(safePushName, {x: 25, y: 95, fontSize: 28, fill: '#000', weight: 'bold'})}
+               ${generateTextPath(safeText, {x: 25, y: 130, fontSize: 24, fill: '#333'})}
              </svg>`;
              
              const bgBuffer = Buffer.from(svgMeme);
@@ -4804,7 +4805,7 @@ Link referensi: ${randomItem.link}` }, { quoted: msg });
                  const safeText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                  const svgMeme = `<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
                    <rect width="512" height="512" fill="transparent"/>
-                   <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="60" font-weight="bold" fill="#ff0055">${safeText}</text>
+                   ${generateTextPath(safeText, {x: 256, y: 256, fontSize: 60, fill: '#ff0055', weight: 'bold', anchor: 'middle'})}
                  </svg>`;
                  const bgBuffer = Buffer.from(svgMeme);
 
@@ -4835,7 +4836,7 @@ Link referensi: ${randomItem.link}` }, { quoted: msg });
                  </linearGradient>
                </defs>
                <rect width="100%" height="100%" fill="url(#grad1)"/>
-               <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Verdana, sans-serif" font-size="80" font-weight="bold" fill="white" stroke="black" stroke-width="2">${safeText}</text>
+               ${generateTextPath(safeText, {x: 256, y: 256, fontSize: 80, fill: 'white', weight: 'bold', anchor: 'middle'})}
              </svg>`;
              const finalBuffer = await sharp(Buffer.from(svgLogo)).png().toBuffer();
              await this.sock.sendMessage(jid, { image: finalBuffer, caption: `🎨 *Logo berhasil dibuat!*` }, { quoted: msg });
@@ -4873,9 +4874,9 @@ Link referensi: ${randomItem.link}` }, { quoted: msg });
                <rect width="600" height="150" fill="#202124" />
                <rect x="20" y="25" width="40" height="40" rx="20" fill="#25D366" />
                <path d="M40,35 L40,55 M30,45 L50,45" stroke="white" stroke-width="4" stroke-linecap="round"/>
-               <text x="80" y="45" font-family="Liberation Sans, sans-serif" font-size="20" font-weight="bold" fill="#e8eaed">WhatsApp • now</text>
-               <text x="80" y="85" font-family="Liberation Sans, sans-serif" font-size="26" font-weight="bold" fill="#ffffff">${safePushName}</text>
-               <text x="80" y="125" font-family="Liberation Sans, sans-serif" font-size="24" fill="#9aa0a6">${safeText}</text>
+               ${generateTextPath('WhatsApp • now', {x: 80, y: 45, fontSize: 20, fill: '#e8eaed', weight: 'bold'})}
+               ${generateTextPath(safePushName, {x: 80, y: 85, fontSize: 26, fill: '#ffffff', weight: 'bold'})}
+               ${generateTextPath(safeText, {x: 80, y: 125, fontSize: 24, fill: '#9aa0a6'})}
              </svg>`;
              
              const bgBuffer = Buffer.from(svgMeme);
