@@ -26,6 +26,10 @@ export function generateTextPath(text: string, options: { x: number, y: number, 
     
     if (options.anchor === 'middle') {
        pathOptions.anchor = 'center baseline';
+    } else if (options.anchor === 'right') {
+       pathOptions.anchor = 'right baseline';
+    } else if (options.anchor === 'middle') {
+       pathOptions.anchor = 'center baseline';
     }
     
     return tts.getPath(text, pathOptions);

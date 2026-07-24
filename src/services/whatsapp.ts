@@ -32,6 +32,178 @@ import ab from "ab-downloader";
 const AUTH_FOLDER = path.join(process.cwd(), "auth_info_baileys");
 const msgRetryCounterCache = new NodeCache();
 
+
+async function sendFakeMoney(sock: any, jid: string, msg: any, nominal: string, type: string, bgColor: string, prefix: string, textColor: string = "#ffffff") {
+    try {
+        await sock.sendMessage(jid, { text: `⏳ *Sedang membuat Fake ${type}...*` }, { quoted: msg });
+        const safeNominal = nominal.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').substring(0, 20);
+        
+        const width = 1080;
+        const height = 2400;
+        
+        const svgImage = `
+          <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+                 <stop offset="0%" stop-color="${bgColor}" />
+                 <stop offset="30%" stop-color="${bgColor}" />
+                 <stop offset="30%" stop-color="#f5f5f5" />
+                 <stop offset="100%" stop-color="#f5f5f5" />
+              </linearGradient>
+              <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                <feDropShadow dx="0" dy="4" stdDeviation="10" flood-opacity="0.1" />
+              </filter>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#bgGrad)"/>
+            
+            <!-- Header -->
+            <!-- App Logo / Icon Placeholder -->
+            <circle cx="80" cy="100" r="40" fill="#fff" />
+            <path d="M60 100 Q 80 80, 100 100 Q 80 120, 60 100" fill="${bgColor}" />
+            
+            <!-- Nominal -->
+            ${generateTextPath(prefix, {x: 140, y: 110, fontSize: 35, fill: '#fff', weight: 'bold'})}
+            ${generateTextPath(safeNominal, {x: 210, y: 115, fontSize: 75, fill: '#fff', weight: 'bold'})}
+            
+            <!-- Eye icon -->
+            <path d="M 450 100 Q 470 80 490 100 Q 470 120 450 100 Z" fill="none" stroke="#fff" stroke-width="4"/>
+            <circle cx="470" cy="100" r="6" fill="#fff"/>
+            <line x1="440" y1="80" x2="500" y2="120" stroke="#fff" stroke-width="4"/>
+            
+            <!-- Promo Button -->
+            <rect x="750" y="60" width="280" height="80" rx="40" fill="#fff" opacity="0.2" />
+            <rect x="750" y="60" width="280" height="80" rx="40" fill="none" stroke="#fff" stroke-width="2" />
+            ${generateTextPath('Cobain ' + type + '+', {x: 890, y: 110, fontSize: 32, fill: '#fff', weight: 'bold', anchor: 'middle'})}
+          
+            <!-- Action Buttons -->
+            <!-- 1 -->
+            <rect x="100" y="220" width="100" height="100" rx="25" fill="#fff" opacity="0.2"/>
+            <path d="M 150 250 L 150 290 M 130 270 L 170 270" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+            ${generateTextPath('Isi Saldo', {x: 150, y: 360, fontSize: 32, fill: '#fff', weight: 'bold', anchor: 'middle'})}
+            <!-- 2 -->
+            <rect x="350" y="220" width="100" height="100" rx="25" fill="#fff" opacity="0.2"/>
+            <path d="M 380 280 Q 400 300 420 280" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <circle cx="400" cy="260" r="10" fill="#fff"/>
+            ${generateTextPath('Minta', {x: 400, y: 360, fontSize: 32, fill: '#fff', weight: 'bold', anchor: 'middle'})}
+            <!-- 3 -->
+            <rect x="600" y="220" width="100" height="100" rx="25" fill="#fff" opacity="0.2"/>
+            <path d="M 630 290 L 650 250 L 670 290 Z" fill="#fff"/>
+            ${generateTextPath('Kirim', {x: 650, y: 360, fontSize: 32, fill: '#fff', weight: 'bold', anchor: 'middle'})}
+            <!-- 4 -->
+            <rect x="850" y="220" width="100" height="100" rx="25" fill="#fff" opacity="0.2"/>
+            <path d="M 870 250 L 930 250 L 900 290 Z" fill="#fff"/>
+            <circle cx="930" cy="230" r="15" fill="#ef4444"/>
+            ${generateTextPath('Pesan', {x: 900, y: 360, fontSize: 32, fill: '#fff', weight: 'bold', anchor: 'middle'})}
+          
+            <!-- Promo Banner -->
+            <rect x="50" y="450" width="980" height="250" rx="40" fill="#fff" opacity="0.15" />
+            <circle cx="200" cy="570" r="70" fill="#fff" opacity="0.8"/>
+            ${generateTextPath('Akses ' + type, {x: 540, y: 530, fontSize: 45, fill: '#fff', weight: 'bold', anchor: 'middle'})}
+            ${generateTextPath('Bisa Tanpa Kuota!', {x: 540, y: 590, fontSize: 45, fill: '#facc15', weight: 'bold', anchor: 'middle'})}
+            <rect x="400" y="620" width="280" height="60" rx="30" fill="#f43f5e" />
+            ${generateTextPath('BELI YUK', {x: 540, y: 660, fontSize: 30, fill: '#fff', weight: 'bold', anchor: 'middle'})}
+          
+            <!-- Main Menu Grid -->
+            <rect x="40" y="750" width="1000" height="500" rx="40" fill="#fff" filter="url(#shadow)" />
+            
+            <!-- Grid Items Row 1 -->
+            <!-- Item 1 -->
+            <polygon points="165,820 190,870 140,870" fill="#3b82f6"/>
+            ${generateTextPath('Google Play', {x: 165, y: 940, fontSize: 30, fill: '#555', anchor: 'middle'})}
+            <!-- Item 2 -->
+            <rect x="390" y="820" width="50" height="50" fill="#8b5cf6" rx="10"/>
+            ${generateTextPath('A+ Rewards', {x: 415, y: 940, fontSize: 30, fill: '#555', anchor: 'middle'})}
+            <!-- Item 3 -->
+            <circle cx="665" cy="845" r="30" fill="#3b82f6"/>
+            ${generateTextPath('Travel', {x: 665, y: 940, fontSize: 30, fill: '#555', anchor: 'middle'})}
+            <!-- Item 4 -->
+            <circle cx="915" cy="845" r="30" fill="#f59e0b"/>
+            ${generateTextPath('Listrik', {x: 915, y: 940, fontSize: 30, fill: '#555', anchor: 'middle'})}
+          
+            <!-- Grid Items Row 2 -->
+            <!-- Item 5 -->
+            <rect x="140" y="1020" width="50" height="50" fill="#ef4444" rx="10"/>
+            ${generateTextPath('Pulsa & Data', {x: 165, y: 1140, fontSize: 30, fill: '#555', anchor: 'middle'})}
+            <!-- Item 6 -->
+            <rect x="390" y="1020" width="50" height="50" fill="#3b82f6" rx="10"/>
+            ${generateTextPath(type + ' Kaget', {x: 415, y: 1140, fontSize: 30, fill: '#555', anchor: 'middle'})}
+            <!-- Item 7 -->
+            <rect x="640" y="1020" width="50" height="50" fill="#ef4444" rx="10"/>
+            ${generateTextPath('Bayar Cicilan', {x: 665, y: 1140, fontSize: 30, fill: '#555', anchor: 'middle'})}
+            <!-- Item 8 -->
+            <circle cx="895" cy="1030" r="10" fill="#64748b" />
+            <circle cx="935" cy="1030" r="10" fill="#64748b" />
+            <circle cx="895" cy="1070" r="10" fill="#64748b" />
+            <circle cx="935" cy="1070" r="10" fill="#64748b" />
+            ${generateTextPath('Lihat Semua', {x: 915, y: 1140, fontSize: 30, fill: '#555', anchor: 'middle'})}
+          
+            <!-- Feed Section -->
+            <rect x="40" y="1290" width="1000" height="350" rx="30" fill="#fff" filter="url(#shadow)" />
+            <!-- Feed 1 -->
+            <circle cx="100" cy="1350" r="25" fill="${bgColor}" />
+            <path d="M 90 1345 L 105 1360 L 115 1345" stroke="#fff" stroke-width="4" fill="none"/>
+            ${generateTextPath('Feed', {x: 140, y: 1360, fontSize: 30, fill: '#111', weight: 'bold'})}
+            ${generateTextPath('hai 👋, siap menjelajah feed?', {x: 230, y: 1360, fontSize: 30, fill: '#444'})}
+            <!-- Feed 2 -->
+            <circle cx="100" cy="1430" r="25" fill="${bgColor}" />
+            <path d="M 90 1425 L 105 1440 L 115 1425" stroke="#fff" stroke-width="4" fill="none"/>
+            ${generateTextPath('Feed', {x: 140, y: 1440, fontSize: 30, fill: '#111', weight: 'bold'})}
+            ${generateTextPath('masuk untuk lihat update terbaru!', {x: 230, y: 1440, fontSize: 30, fill: '#444'})}
+            <!-- Feed 3 -->
+            <circle cx="100" cy="1510" r="25" fill="${bgColor}" />
+            <path d="M 90 1505 L 105 1520 L 115 1505" stroke="#fff" stroke-width="4" fill="none"/>
+            ${generateTextPath('Feed', {x: 140, y: 1520, fontSize: 30, fill: '#111', weight: 'bold'})}
+            ${generateTextPath('berikan 💬, ❤️, 🎁 biar seru!', {x: 230, y: 1520, fontSize: 30, fill: '#444'})}
+            <!-- Feed 4 -->
+            <circle cx="100" cy="1590" r="25" fill="${bgColor}" />
+            <path d="M 90 1585 L 105 1600 L 115 1585" stroke="#fff" stroke-width="4" fill="none"/>
+            ${generateTextPath('Feed', {x: 140, y: 1600, fontSize: 30, fill: '#111', weight: 'bold'})}
+            ${generateTextPath('sambungkan koneksi yang terpercaya!', {x: 230, y: 1600, fontSize: 30, fill: '#444'})}
+          
+            <!-- Protection Banner -->
+            <rect x="40" y="1680" width="1000" height="300" rx="30" fill="${bgColor}" filter="url(#shadow)" />
+            <rect x="120" y="1720" width="350" height="60" rx="30" fill="#fff" />
+            ${generateTextPath(type.toUpperCase() + ' PROTECTION', {x: 160, y: 1760, fontSize: 24, fill: bgColor, weight: 'bold'})}
+            ${generateTextPath('JAMINAN', {x: 120, y: 1840, fontSize: 50, fill: '#fff', weight: 'bold'})}
+            ${generateTextPath('ANTI PENDING', {x: 120, y: 1900, fontSize: 75, fill: '#fff', weight: 'bold'})}
+            <rect x="120" y="1920" width="350" height="50" rx="25" fill="#e11d48" />
+            ${generateTextPath('Cek Perlindunganmu >', {x: 295, y: 1955, fontSize: 22, fill: '#fff', weight: 'bold', anchor: 'middle'})}
+          
+            <!-- Bottom Nav -->
+            <rect x="0" y="2150" width="1080" height="250" fill="#fff" filter="url(#shadow)" />
+            <!-- Nav 1 -->
+            <path d="M 125 2240 L 140 2220 L 155 2240 Z" fill="#111"/>
+            ${generateTextPath('Beranda', {x: 140, y: 2300, fontSize: 30, fill: '#111', weight: 'bold', anchor: 'middle'})}
+            <!-- Nav 2 -->
+            <rect x="300" y="2210" width="40" height="40" fill="none" stroke="#555" stroke-width="6" rx="5" />
+            <line x1="300" y1="2230" x2="340" y2="2230" stroke="#555" stroke-width="4"/>
+            ${generateTextPath('Aktivitas', {x: 320, y: 2300, fontSize: 30, fill: '#555', anchor: 'middle'})}
+            <!-- Nav 3 (PAY) -->
+            <circle cx="540" cy="2160" r="90" fill="${bgColor}" />
+            <circle cx="540" cy="2160" r="75" fill="none" stroke="#fff" stroke-width="4" />
+            <rect x="515" y="2120" width="20" height="20" fill="#fff" />
+            <rect x="545" y="2120" width="20" height="20" fill="#fff" />
+            <rect x="515" y="2150" width="20" height="20" fill="#fff" />
+            ${generateTextPath('PAY', {x: 540, y: 2215, fontSize: 30, fill: '#fff', weight: 'bold', anchor: 'middle'})}
+            <!-- Nav 4 -->
+            <rect x="740" y="2210" width="40" height="30" fill="none" stroke="#555" stroke-width="6" rx="5" />
+            <path d="M 740 2225 L 780 2225" stroke="#555" stroke-width="4"/>
+            ${generateTextPath('Dompet', {x: 760, y: 2300, fontSize: 30, fill: '#555', anchor: 'middle'})}
+            <!-- Nav 5 -->
+            <circle cx="940" cy="2220" r="15" fill="none" stroke="#555" stroke-width="6" />
+            <path d="M 920 2260 Q 940 2230 960 2260" fill="none" stroke="#555" stroke-width="6" />
+            ${generateTextPath('Saya', {x: 940, y: 2300, fontSize: 30, fill: '#555', anchor: 'middle'})}
+          </svg>
+        `;
+        
+        const buffer = await sharp(Buffer.from(svgImage)).png().toBuffer();
+        await sock.sendMessage(jid, { image: buffer, caption: `✅ Fake ${type} berhasil dibuat!` }, { quoted: msg });
+    } catch (err: any) {
+        console.error("Fakemoney error: ", err);
+        await sock.sendMessage(jid, { text: `❌ Gagal membuat fake ${type}.` }, { quoted: msg });
+    }
+}
+
 export class WhatsAppBot {
   public userEmail: string;
   private authFolder: string;
@@ -834,7 +1006,8 @@ export class WhatsAppBot {
     const karyawanCommands = ['.karyawanmenu', 'karyawanmenu', '.addproduk', 'addproduk', '.delproduk', 'delproduk', '.listproduk', 'listproduk', '.cekproduk', 'cekproduk', '.addstok', 'addstok', '.cekstok', 'cekstok', '.updatestok', 'updatestok', '.restock', 'restock', '.penjualan', 'penjualan', '.riwayatjual', 'riwayatjual', '.laporan', 'laporan', '.konfirmasi', 'konfirmasi', '.hargaproduk', 'hargaproduk', '.strukpembayaran', 'strukpembayaran'];
     const hewanCommands = ['.hewanmenu', 'hewanmenu', '.catcanvas', 'catcanvas', '.dogcanvas', 'dogcanvas', '.foxcanvas', 'foxcanvas', '.wolfcanvas', 'wolfcanvas', '.lioncanvas', 'lioncanvas', '.tigercanvas', 'tigercanvas', '.pandacanvas', 'pandacanvas', '.bunnycanvas', 'bunnycanvas', '.owlcanvas', 'owlcanvas', '.eaglecanvas', 'eaglecanvas', '.capycanvas', 'capycanvas', '.penguincanvas', 'penguincanvas'];
     const bokepCommands = ['.bokepmenu', 'bokepmenu', '.vidbokepindonesia', 'vidbokepindonesia', '.vidbokepmalaysia', 'vidbokepmalaysia', '.vidbokepjepang', 'vidbokepjepang', '.vidbokepchina', 'vidbokepchina', '.vidbokepamerika', 'vidbokepamerika'];
-    const aiCommands = ['.aimenu', 'aimenu', '.gpt4', 'gpt4', '.gemini', 'gemini', '.deepseek', 'deepseek', '.ai', 'ai', '.bing', 'bing', '.imgai', 'imgai', '.askai', 'askai', '.bingimg', 'bingimg', '.nanobananaai', 'nanobananaai', '.hapusbgfoto', 'hapusbgfoto'];
+const aiCommands = ['.aimenu', 'aimenu', '.gpt4', 'gpt4', '.gemini', 'gemini', '.deepseek', 'deepseek', '.ai', 'ai', '.bing', 'bing', '.imgai', 'imgai', '.askai', 'askai', '.bingimg', 'bingimg', '.nanobananaai', 'nanobananaai', '.hapusbgfoto', 'hapusbgfoto'];
+    const fakemoneyCommands = ['.fakemoneymenu', 'fakemoneymenu', '.fakedana', 'fakedana', '.fakegopay', 'fakegopay', '.fakeseabank', 'fakeseabank', '.fakeovo', 'fakeovo', '.fakeshopeepay', 'fakeshopeepay', '.fakebrimo', 'fakebrimo', '.fakelivin', 'fakelivin'];
     
     if (ownerCommands.includes(requestedCmd) && !isOwner) {
       this.broadcastState(`Blocked non-owner from using ${requestedCmd}`);
@@ -859,7 +1032,7 @@ export class WhatsAppBot {
 
     if (isMenuCmd) {
       const botName = this.customBotName || this.sock.user?.name || "Wabot Pro";
-      const totalFitur = ownerCommands.length + groupCommands.length + funCommands.length + margaCommands.length + videoCommands.length + stickerCommands.length + downloadCommands.length + kristenCommands.length + islamCommands.length + cecanCommands.length + primbonCommands.length + animeCommands.length + sertifikatCommands.length + rpgCommands.length + storeCommands.length + beritaCommands.length + sulapCommands.length + hentaiCommands.length + hantuCommands.length + posterCommands.length + coganCommands.length + toolsCommands.length + deviceCommands.length + tiketCommands.length + karyawanCommands.length + hewanCommands.length + bokepCommands.length + aiCommands.length;
+      const totalFitur = ownerCommands.length + groupCommands.length + funCommands.length + margaCommands.length + videoCommands.length + stickerCommands.length + downloadCommands.length + kristenCommands.length + islamCommands.length + cecanCommands.length + primbonCommands.length + animeCommands.length + sertifikatCommands.length + rpgCommands.length + storeCommands.length + beritaCommands.length + sulapCommands.length + hentaiCommands.length + hantuCommands.length + posterCommands.length + coganCommands.length + toolsCommands.length + deviceCommands.length + tiketCommands.length + karyawanCommands.length + hewanCommands.length + bokepCommands.length + aiCommands.length + fakemoneyCommands.length;
       
       const dateNow = new Date();
       const dateOptions: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Jakarta' };
@@ -912,6 +1085,7 @@ ${readmore}
 │ .tiketmenu
 │ .karyawanmenu
 │ .hewanmenu
+│ .fakemoneymenu
 
 Ketik menu yang kamu inginkan.`;
       
@@ -947,6 +1121,31 @@ Ketik menu yang kamu inginkan.`;
         this.broadcastState(`Error sending allmenu: ${err.message}`);
         await this.sock.sendMessage(jid, { text: `⚠️ Terjadi kesalahan saat mengirim menu.` }, { quoted: msg });
       }
+} else if (body === "fakemoneymenu" || body === ".fakemoneymenu" || body === "fakemoney menu" || body === ".fakemoney menu") {
+      const fmText = `💸 *Fakemoney Menu*\n\n│ .fakedana [nominal]\n│ .fakegopay [nominal]\n│ .fakeseabank [nominal]\n│ .fakeovo [nominal]\n│ .fakeshopeepay [nominal]\n│ .fakebrimo [nominal]\n│ .fakelivin [nominal]`;
+      await this.sock.sendMessage(jid, { text: fmText }, { quoted: msg });
+      this.broadcastState(`Responded to fakemoneymenu command`);
+    } else if (body.startsWith(".fakedana ") || body.startsWith("fakedana ")) {
+      const nominal = messageContent.replace(/^\.?fakedana\s*/i, "").trim() || "100.000";
+      await sendFakeMoney(this.sock, jid, msg, nominal, "DANA", "#118EEA", "Rp");
+    } else if (body.startsWith(".fakegopay ") || body.startsWith("fakegopay ")) {
+      const nominal = messageContent.replace(/^\.?fakegopay\s*/i, "").trim() || "100.000";
+      await sendFakeMoney(this.sock, jid, msg, nominal, "GoPay", "#00AED6", "Rp");
+    } else if (body.startsWith(".fakeseabank ") || body.startsWith("fakeseabank ")) {
+      const nominal = messageContent.replace(/^\.?fakeseabank\s*/i, "").trim() || "100.000";
+      await sendFakeMoney(this.sock, jid, msg, nominal, "SeaBank", "#FE5900", "Rp");
+    } else if (body.startsWith(".fakeovo ") || body.startsWith("fakeovo ")) {
+      const nominal = messageContent.replace(/^\.?fakeovo\s*/i, "").trim() || "100.000";
+      await sendFakeMoney(this.sock, jid, msg, nominal, "OVO", "#4C2A86", "Rp");
+    } else if (body.startsWith(".fakeshopeepay ") || body.startsWith("fakeshopeepay ")) {
+      const nominal = messageContent.replace(/^\.?fakeshopeepay\s*/i, "").trim() || "100.000";
+      await sendFakeMoney(this.sock, jid, msg, nominal, "ShopeePay", "#EE4D2D", "Rp");
+    } else if (body.startsWith(".fakebrimo ") || body.startsWith("fakebrimo ")) {
+      const nominal = messageContent.replace(/^\.?fakebrimo\s*/i, "").trim() || "100.000";
+      await sendFakeMoney(this.sock, jid, msg, nominal, "BRImo", "#00529C", "Rp");
+    } else if (body.startsWith(".fakelivin ") || body.startsWith("fakelivin ")) {
+      const nominal = messageContent.replace(/^\.?fakelivin\s*/i, "").trim() || "100.000";
+      await sendFakeMoney(this.sock, jid, msg, nominal, "Livin' by Mandiri", "#FFB61B", "Rp", "#003D79");
     } else if (body === "storemenu" || body === ".storemenu" || body === "store menu" || body === ".store menu") {
       const storeText = `🛒 *Store Menu*\n\n│ .list\n│ .addlist\n│ .dellist\n│ .update\n│ .jeda\n│ .tambah\n│ .kurang\n│ .kali\n│ .delsetdone\n│ .changedone\n│ .setdone\n│ .delproses\n│ .changeproses\n│ .setproses\n│ .proses\n│ .done`;
       await this.sock.sendMessage(jid, { text: storeText }, { quoted: msg });
@@ -2134,7 +2333,7 @@ Ketik menu yang kamu inginkan.`;
       this.broadcastState(`Deleted custom bot name`);
       await this.sock.sendMessage(jid, { text: `✅ Berhasil mereset nama bot ke default.` }, { quoted: msg });
     } else if (body === ".totalfitur" || body === "totalfitur") {
-      const totalFitur = ownerCommands.length + groupCommands.length + funCommands.length + margaCommands.length + videoCommands.length + stickerCommands.length + downloadCommands.length + kristenCommands.length + islamCommands.length + cecanCommands.length + primbonCommands.length + animeCommands.length + sertifikatCommands.length + rpgCommands.length + storeCommands.length + beritaCommands.length + sulapCommands.length + hentaiCommands.length + hantuCommands.length + posterCommands.length + coganCommands.length + toolsCommands.length + deviceCommands.length + tiketCommands.length + karyawanCommands.length + hewanCommands.length + bokepCommands.length + aiCommands.length;
+      const totalFitur = ownerCommands.length + groupCommands.length + funCommands.length + margaCommands.length + videoCommands.length + stickerCommands.length + downloadCommands.length + kristenCommands.length + islamCommands.length + cecanCommands.length + primbonCommands.length + animeCommands.length + sertifikatCommands.length + rpgCommands.length + storeCommands.length + beritaCommands.length + sulapCommands.length + hentaiCommands.length + hantuCommands.length + posterCommands.length + coganCommands.length + toolsCommands.length + deviceCommands.length + tiketCommands.length + karyawanCommands.length + hewanCommands.length + bokepCommands.length + aiCommands.length + fakemoneyCommands.length;
       await this.sock.sendMessage(jid, { text: `⚠️ *Total Fitur Bot* : ${totalFitur} Fitur` }, { quoted: msg });
     } else if (body.startsWith(".addprefix") || body.startsWith("addprefix")) {
       const text = messageContent.replace(/^\.?addprefix\s*/i, "").trim();
